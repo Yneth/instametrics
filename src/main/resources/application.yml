@@ -1,5 +1,0 @@
-server.port: 9555
-endpoints:
-  cors:
-    allowed-origins: 'http://localhost:9555'
-    allow-credentials: true
