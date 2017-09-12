@@ -1,30 +1,30 @@
 package ua.abond.instaret.entity;
 
 
-
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FollowedBy {
 
-    private List<User> data;
+    @JsonProperty("id")
+    private String id;
 
-    @Getter
-    @Setter
-    public static class User {
+    @JsonProperty("username")
+    private String username;
 
-        private String id;
+    @JsonProperty("full_name")
+    private String fullName;
 
-        private String username;
-
-        private String fullName;
-
-        private String profileImage;
-
-    }
+    @JsonProperty("profile_pic_url")
+    private String profileImage;
 
 }
