@@ -25,48 +25,49 @@
             showRetards = $('#showRetards'),
             saveFollowers = $('#saveFollowers'),
             showNewcomers = $('#showNewcomers'),
-            output = $('#output');
+            printToOutput = callback($('#output'));
+
+        var retardService = function (userName) {
+            var params = '?userName=' + userName;
+            return {
+                showFollowers: function (cb) {
+                    $.get('/followers/' + params, cb);
+                },
+                showRetards: function (cb) {
+                    $.get('/retards/' + params, cb);
+                },
+                showNewcomers: function (cb) {
+                    $.get('/followers/new/' + params, cb);
+                },
+                saveFollowers: function (cb) {
+                    $.get('/followers/save/' + params, cb);
+                }
+            };
+        };
 
         showFollowers.on('click', function () {
-            $.get('/followers/?userName=' + userNameText.val(), function (data) {
-                output.empty();
-                for (var id in data) {
-                    var element = document.createElement('div');
-                    element.innerHTML = JSON.stringify(data[id]);
-                    output.append(element);
-                }
-            });
+            retardService(userNameText.val()).showFollowers(printToOutput);
         });
         showRetards.on('click', function () {
-            $.get('/retards/?userName=' + userNameText.val(), function (data) {
-                output.empty();
-                for (var id in data) {
-                    var element = document.createElement('div');
-                    element.innerHTML = JSON.stringify(data[id]);
-                    output.append(element);
-                }
-            });
+            retardService(userNameText.val()).showRetards(printToOutput);
         });
         showNewcomers.on('click', function () {
-            $.get('/followers/new/?userName=' + userNameText.val(), function (data) {
-                output.empty();
-                for (var id in data) {
-                    var element = document.createElement('div');
-                    element.innerHTML = JSON.stringify(data[id]);
-                    output.append(element);
-                }
-            });
+            retardService(userNameText.val()).showNewcomers(printToOutput);
         });
         saveFollowers.on('click', function () {
-            $.get('/followers/save/?userName=' + userNameText.val(), function (data) {
+            retardService(userNameText.val()).saveFollowers(printToOutput);
+        });
+
+        function callback(output) {
+            return function (data) {
                 output.empty();
                 for (var id in data) {
                     var element = document.createElement('div');
                     element.innerHTML = JSON.stringify(data[id]);
                     output.append(element);
                 }
-            });
-        });
+            };
+        }
     })();
 </script>
 </body>
