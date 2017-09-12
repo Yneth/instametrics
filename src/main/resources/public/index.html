@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="text" id="userName"/>
+
+<a id="showFollowers" href="#">Current followers</a>
+<a id="showRetards" href="#">Retards</a>
+<a id="showNewcomers" href="#">Newcomers</a>
+<a id="saveFollowers" href="#">Save</a>
+
+<div id="output">
+    Output
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    ;(function () {
+        var doc = $(document),
+            userNameText = $('#userName'),
+            showFollowers = $('#showFollowers'),
+            showRetards = $('#showRetards'),
+            saveFollowers = $('#saveFollowers'),
+            showNewcomers = $('#showNewcomers'),
+            output = $('#output');
+
+        showFollowers.on('click', function () {
+            $.get('/followers/?userName=' + userNameText.val(), function (data) {
+                output.empty();
+                for (var id in data) {
+                    var element = document.createElement('div');
+                    element.innerHTML = JSON.stringify(data[id]);
+                    output.append(element);
+                }
+            });
+        });
+        showRetards.on('click', function () {
+            $.get('/retards/?userName=' + userNameText.val(), function (data) {
+                output.empty();
+                for (var id in data) {
+                    var element = document.createElement('div');
+                    element.innerHTML = JSON.stringify(data[id]);
+                    output.append(element);
+                }
+            });
+        });
+        showNewcomers.on('click', function () {
+            $.get('/followers/new/?userName=' + userNameText.val(), function (data) {
+                output.empty();
+                for (var id in data) {
+                    var element = document.createElement('div');
+                    element.innerHTML = JSON.stringify(data[id]);
+                    output.append(element);
+                }
+            });
+        });
+        saveFollowers.on('click', function () {
+            $.get('/followers/save/?userName=' + userNameText.val(), function (data) {
+                output.empty();
+                for (var id in data) {
+                    var element = document.createElement('div');
+                    element.innerHTML = JSON.stringify(data[id]);
+                    output.append(element);
+                }
+            });
+        });
+    })();
+</script>
+</body>
+</html>

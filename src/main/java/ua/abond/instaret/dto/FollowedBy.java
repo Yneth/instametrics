@@ -1,4 +1,4 @@
-package ua.abond.instaret.entity;
+package ua.abond.instaret.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FollowedBy {
 

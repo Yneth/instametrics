@@ -1,0 +1,6 @@
+server:
+  port: 9555
+
+instagram.pre.auth:
+  username: ${instagram.username}
+  password: ${instagram.password}

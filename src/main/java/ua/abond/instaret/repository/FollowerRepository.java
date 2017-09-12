@@ -1,6 +1,6 @@
-package ua.abond.instaret.service;
+package ua.abond.instaret.repository;
 
-import ua.abond.instaret.entity.FollowedBy;
+import ua.abond.instaret.dto.FollowedBy;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
