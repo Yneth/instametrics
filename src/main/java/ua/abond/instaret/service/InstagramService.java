@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import ua.abond.instaret.entity.FollowedBy;
 
 import java.io.IOException;
@@ -17,6 +18,9 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -24,8 +28,6 @@ import java.util.stream.StreamSupport;
 @RequiredArgsConstructor
 public class InstagramService {
 
-    private static final String LOGIN = "usrnm";
-    private static final String PASSWORD = "pwd";
     private static final String INSTAGRAM_URL = "https://www.instagram.com/";
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -34,13 +36,12 @@ public class InstagramService {
         Connection.Response initialPage = Jsoup.connect(INSTAGRAM_URL)
             .method(Connection.Method.GET)
             .execute();
-        System.out.println(initialPage.body());
 
         Connection.Response loginResponse = Jsoup.connect(INSTAGRAM_URL + "accounts/login/ajax/")
             .data("username", login)
             .data("password", password)
-            .header("origin", "https://www.instagram.com/")
-            .header("referer", "https://www.instagram.com/")
+            .header("origin", INSTAGRAM_URL)
+            .header("referer", INSTAGRAM_URL)
             .header("x-instagram-ajax", "1")
             .header("x-requested-with", "XMLHttpRequest")
             .header("x-csrftoken", initialPage.cookies().get("csrftoken"))
@@ -52,64 +53,97 @@ public class InstagramService {
             .followRedirects(false)
             .method(Connection.Method.POST)
             .execute();
-        return new Authentication(loginResponse.cookies());
+
+        Map<String, String> cookies = loginResponse.cookies();
+        String userId = getUserId(cookies, login);
+        return new Authentication(login, userId, cookies);
     }
 
-    // https://www.instagram.com/graphql/query/?query_id=17851374694183129&variables=%7B%22id%22%3A%221519061797%22%2C%22first%22%3A20%7D
-    public List<FollowedBy> getFollowers() throws Exception {
-        Authentication authentication = login(LOGIN, PASSWORD);
+    public List<FollowedBy> getFollowers(Authentication auth, String userName, int batchSize) throws Exception {
+        Variables queryVariables = getQueryVariables(batchSize, getUserId(auth, userName));
 
-        int count = 30;
-        Variables queryVariables = getQueryVariables(count, authentication);
+        String queryId = getQueryId(auth)
+            .orElseThrow(() -> new RuntimeException("could not find queryId"));
 
         Map<String, String> params = new HashMap<>();
-        params.put("variables", mapper.writeValueAsString(queryVariables));
-        params.put("query_id", "17851374694183129");
+        params.put("query_id", queryId);
 
-        String url = String.format("%sgraphql/query/?%s", INSTAGRAM_URL, paramsToString(params));
-        Connection.Response followersResponse =
-            Jsoup.connect(url)
-                .header("x-requested-with", "XMLHttpRequest")
-                .header("accept-encoding", "gzip, deflate, br")
-                .cookies(authentication.getCookies())
-                .ignoreContentType(true)
-                .execute();
+        JsonNode pageInfoNode = null;
+        Stream<JsonNode> nodes = Stream.empty();
+        do {
+            if (pageInfoNode != null) {
+                JsonNode endCursorNode = pageInfoNode.get("end_cursor");
+                queryVariables = queryVariables.next(endCursorNode.asText(null));
+            }
+            params.put("variables", mapper.writeValueAsString(queryVariables));
 
-        JsonNode edgeFollowedBy = mapper.readTree(followersResponse.body())
-            .get("data")
-            .get("user")
-            .get("edge_followed_by");
+            String url = String.format("%sgraphql/query/?%s", INSTAGRAM_URL, paramsToString(params));
 
-        JsonNode pageInfoNode = edgeFollowedBy.get("page_info");
-        JsonNode followerNodes = edgeFollowedBy.get("edges");
-        Stream<JsonNode> nodes = StreamSupport.stream(followerNodes.spliterator(), false);
-        while (pageInfoNode.get("has_next_page").asBoolean(false)) {
-            JsonNode endCursorNode = pageInfoNode.get("end_cursor");
-            queryVariables.next(endCursorNode.toString());
-
-            followersResponse =
+            Connection.Response followersResponse =
                 Jsoup.connect(url)
                     .header("x-requested-with", "XMLHttpRequest")
                     .header("accept-encoding", "gzip, deflate, br")
-                    .cookies(authentication.getCookies())
+                    .cookies(auth.getCookies())
                     .ignoreContentType(true)
                     .execute();
 
-            edgeFollowedBy = mapper.readTree(followersResponse.body())
+            JsonNode edgeFollowedBy = mapper.readTree(followersResponse.body())
                 .get("data")
                 .get("user")
                 .get("edge_followed_by");
 
             pageInfoNode = edgeFollowedBy.get("page_info");
-
-            followerNodes = edgeFollowedBy.get("edges");
+            JsonNode followerNodes = edgeFollowedBy.get("edges");
             nodes = Stream.concat(nodes, StreamSupport.stream(followerNodes.spliterator(), false));
-        }
+        } while (pageInfoNode.get("has_next_page").asBoolean(false));
 
         return nodes.map(node -> node.get("node"))
             .map(JsonNode::toString)
             .map(node -> unchecked(() -> mapper.readValue(node, FollowedBy.class)).get())
             .collect(Collectors.toList());
+    }
+
+    public List<FollowedBy> getFollowers(Authentication auth, String userName) throws Exception {
+        return getFollowers(auth, userName, 10);
+    }
+
+    public Optional<String> getQueryId(Authentication authentication) throws IOException {
+        Document document = Jsoup.connect(INSTAGRAM_URL)
+            .cookies(authentication.getCookies())
+            .ignoreContentType(true)
+            .get();
+        String input = Jsoup.connect(INSTAGRAM_URL + document.body()
+            .getElementsByAttributeValueContaining("src", "en_US_Commons")
+            .first()
+            .attr("src")
+            .substring(1)
+        ).execute().body();
+
+        Pattern varNamePattern = Pattern.compile("\\w{1,2}=(?<var>.{1,2}),\\w{1,2}=\"edge_followed_by\"");
+        Matcher matcher = varNamePattern.matcher(input);
+        if (matcher.find()) {
+            String varName = matcher.group("var");
+
+            Matcher varValueMatcher = Pattern.compile(varName + "=\"(?<id>\\d{17})\"").matcher(input);
+            if (varValueMatcher.find()) {
+                return Optional.of(varValueMatcher.group("id"));
+            }
+        }
+        return Optional.empty();
+    }
+
+    public String getUserId(Authentication authentication, String userName) throws IOException {
+        return getUserId(authentication.getCookies(), userName);
+    }
+
+    private String getUserId(Map<String, String> cookies, String userName) throws IOException {
+        Connection.Response response = Jsoup.connect(String.format("%s%s/?__a=1", INSTAGRAM_URL, userName))
+            .ignoreContentType(true)
+            .cookies(cookies)
+            .execute();
+
+        JsonNode jsonNode = mapper.readTree(response.body());
+        return jsonNode.get("user").get("id").asText();
     }
 
     private String paramsToString(Map<String, String> params) {
@@ -118,21 +152,11 @@ public class InstagramService {
             .collect(Collectors.joining("&"));
     }
 
-    private Variables getQueryVariables(int count, Authentication authentication) throws IOException {
+    private Variables getQueryVariables(int count, String userId) throws IOException {
         Variables variables = new Variables();
         variables.setFirst(count);
-        variables.setUserId(getUserId(authentication));
+        variables.setUserId(userId);
         return variables;
-    }
-
-    private String getUserId(Authentication authentication) throws IOException {
-        Connection.Response response = Jsoup.connect("https://www.instagram.com/usrnm/?__a=1")
-            .ignoreContentType(true)
-            .cookies(authentication.getCookies())
-            .execute();
-
-        JsonNode jsonNode = mapper.readTree(response.body());
-        return jsonNode.get("user").get("id").asText();
     }
 
     @Getter
