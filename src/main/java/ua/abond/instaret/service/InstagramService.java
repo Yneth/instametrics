@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import ua.abond.instaret.dto.FollowedBy;
@@ -37,9 +38,7 @@ public class InstagramService {
     private final ObjectMapper mapper;
 
     public Authentication login(String login, String password) throws Exception {
-        Connection.Response initialPage = Jsoup.connect(INSTAGRAM_URL)
-                .method(Connection.Method.GET)
-                .execute();
+        Connection.Response initialPage = Jsoup.connect(INSTAGRAM_URL).execute();
 
         Connection.Response loginResponse = Jsoup.connect(INSTAGRAM_URL + "accounts/login/ajax/")
                 .data("username", login)
@@ -64,9 +63,9 @@ public class InstagramService {
     }
 
     public List<FollowedBy> getFollowers(Authentication auth, String userName, int batchSize) throws Exception {
-        Variables queryVariables = getQueryVariables(batchSize, getUserId(auth, userName));
+        Variables queryVariables = new Variables(getUserId(auth, userName), batchSize);
 
-        String queryId = getQueryId(auth)
+        String queryId = getFollowedByQueryId(auth)
                 .orElseThrow(() -> new RuntimeException("could not find queryId"));
 
         Map<String, String> params = new HashMap<>();
@@ -108,21 +107,26 @@ public class InstagramService {
     }
 
     public List<FollowedBy> getFollowers(Authentication auth, String userName) throws Exception {
-        return getFollowers(auth, userName, 10);
+        return getFollowers(auth, userName, 100);
     }
 
-    public Optional<String> getQueryId(Authentication authentication) throws IOException {
-        Document document = Jsoup.connect(INSTAGRAM_URL)
+    public Optional<String> getFollowedByQueryId(Authentication authentication) throws IOException {
+        Document originalPage = Jsoup.connect(INSTAGRAM_URL)
                 .cookies(authentication.getCookies())
                 .ignoreContentType(true)
                 .get();
-        String input = Jsoup.connect(INSTAGRAM_URL + document.body()
-                .getElementsByAttributeValueContaining("src", "en_US_Commons")
-                .first()
-                .attr("src")
-                .substring(1)
-        ).execute().body();
 
+        String scriptUrl = INSTAGRAM_URL +
+                (originalPage.body()
+                        .getElementsByAttributeValueContaining("src", "en_US_Commons")
+                        .first()
+                        .attr("src")
+                        // why so?
+                        .substring(1));
+        // get script file
+        String input = Jsoup.connect(scriptUrl).execute().body();
+
+        // and retrieve followedBy queryId from this file
         Pattern varNamePattern = Pattern.compile("\\w{1,2}=(?<var>.{1,2}),\\w{1,2}=\"edge_followed_by\"");
         Matcher matcher = varNamePattern.matcher(input);
         if (matcher.find()) {
@@ -156,30 +160,29 @@ public class InstagramService {
                 .collect(Collectors.joining("&"));
     }
 
-    private Variables getQueryVariables(int count, String userId) throws IOException {
-        Variables variables = new Variables();
-        variables.setFirst(count);
-        variables.setUserId(userId);
-        return variables;
-    }
-
     @Getter
     @Setter
+    @NoArgsConstructor
     private static final class Variables {
 
         @JsonProperty("id")
         private String userId;
 
-        @JsonProperty("first")
-        private int first;
+        @JsonProperty("batchSize")
+        private int batchSize;
 
         @JsonProperty("after")
         private String after;
 
+        public Variables(String userId, int count) {
+            this.userId = userId;
+            this.batchSize = count;
+        }
+
         public Variables next(String after) {
             Variables variables = new Variables();
             variables.setUserId(this.userId);
-            variables.setFirst(this.first);
+            variables.setBatchSize(this.batchSize);
             variables.setAfter(after);
             return variables;
         }

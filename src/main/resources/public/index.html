@@ -44,18 +44,21 @@
                 }
             };
         };
+        var retardServiceFactory = function () {
+            return retardService(userNameText.val());
+        };
 
         showFollowers.on('click', function () {
-            retardService(userNameText.val()).showFollowers(printToOutput);
+            retardServiceFactory().showFollowers(printToOutput);
         });
         showRetards.on('click', function () {
-            retardService(userNameText.val()).showRetards(printToOutput);
+            retardServiceFactory().showRetards(printToOutput);
         });
         showNewcomers.on('click', function () {
-            retardService(userNameText.val()).showNewcomers(printToOutput);
+            retardServiceFactory().showNewcomers(printToOutput);
         });
         saveFollowers.on('click', function () {
-            retardService(userNameText.val()).saveFollowers(printToOutput);
+            retardServiceFactory().saveFollowers(printToOutput);
         });
 
         function callback(output) {
