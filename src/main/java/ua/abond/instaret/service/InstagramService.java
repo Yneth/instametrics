@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,6 +30,7 @@ import ua.abond.instaret.dto.FollowedBy;
 
 import static io.vavr.API.unchecked;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InstagramService {
@@ -82,6 +84,7 @@ public class InstagramService {
 
             String url = String.format("%sgraphql/query/?%s", INSTAGRAM_URL, paramsToString(params));
 
+            log.debug("Querying {}", url);
             Connection.Response followersResponse =
                     Jsoup.connect(url)
                             .header("x-requested-with", "XMLHttpRequest")
@@ -107,7 +110,7 @@ public class InstagramService {
     }
 
     public List<FollowedBy> getFollowers(Authentication auth, String userName) throws Exception {
-        return getFollowers(auth, userName, 100);
+        return getFollowers(auth, userName, 10);
     }
 
     public Optional<String> getFollowedByQueryId(Authentication authentication) throws IOException {
@@ -168,11 +171,11 @@ public class InstagramService {
         @JsonProperty("id")
         private String userId;
 
-        @JsonProperty("batchSize")
+        @JsonProperty("first")
         private int batchSize;
 
         @JsonProperty("after")
-        private String after;
+        private String cursor;
 
         public Variables(String userId, int count) {
             this.userId = userId;
@@ -183,7 +186,7 @@ public class InstagramService {
             Variables variables = new Variables();
             variables.setUserId(this.userId);
             variables.setBatchSize(this.batchSize);
-            variables.setAfter(after);
+            variables.setCursor(after);
             return variables;
         }
 

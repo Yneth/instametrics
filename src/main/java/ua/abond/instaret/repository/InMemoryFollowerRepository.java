@@ -2,12 +2,9 @@ package ua.abond.instaret.repository;
 
 import static io.vavr.API.unchecked;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.springframework.stereotype.Component;
-
 import io.vavr.Tuple2;
+import org.springframework.stereotype.Component;
 import ua.abond.instaret.dto.FollowedBy;
 
 import java.io.File;
@@ -46,7 +43,7 @@ public class InMemoryFollowerRepository implements FollowerRepository {
             })
             .map(tuple -> {
                 List<FollowedBy> followers = Arrays.asList(
-                        unchecked(() -> mapper.readValue(tuple._2, FollowedBy[].class)).get());
+                    unchecked(() -> mapper.readValue(tuple._2, FollowedBy[].class)).get());
                 return new Tuple2<>(tuple._1, followers);
             })
             .forEach(t -> followerMap.put(t._1, t._2));
@@ -64,14 +61,8 @@ public class InMemoryFollowerRepository implements FollowerRepository {
 
         List<String> linesToWrite = followerMap.entrySet()
             .stream()
-            .map(e -> {
-                try {
-                    return e.getKey() + "=" + mapper.writeValueAsString(e.getValue());
-                } catch (JsonProcessingException e1) {
-                    e1.printStackTrace();
-                }
-                return null;
-            }).collect(Collectors.toList());
+            .map(e -> unchecked(() -> e.getKey() + "=" + mapper.writeValueAsString(e.getValue())).get())
+            .collect(Collectors.toList());
         URL url = this.getClass().getResource("/");
         File file = new File(new File(new URI(url.toString())), FILE_NAME);
         if (!file.exists()) {

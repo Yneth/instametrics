@@ -1,6 +1,11 @@
 package ua.abond.instaret.service;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.abond.instaret.dto.FollowedBy;
+import ua.abond.instaret.exception.PreAuthorizedInstagramServiceInitializationException;
+import ua.abond.instaret.repository.FollowerRepository;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -8,10 +13,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import lombok.RequiredArgsConstructor;
-import ua.abond.instaret.dto.FollowedBy;
-import ua.abond.instaret.repository.FollowerRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -56,23 +57,42 @@ public class PreAuthorizedInstagramService {
             return Collections.emptyList();
         }
         return left.stream().filter(t -> !right.contains(t))
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
     }
 
     public static PreAuthorizedInstagramService create(InstagramService instagramService,
                                                        FollowerRepository followerRepository,
                                                        InstagramPreAuthorizationProperties props) {
+
         if (Stream.of(props.getPassword(), props.getUsername()).allMatch(Objects::isNull)) {
-            throw new RuntimeException("Failed to initialize PreAuthorizedInstagramService." +
-                    " Login or password is missing");
+            throw new PreAuthorizedInstagramServiceInitializationException("Login or password is missing");
         }
         Authentication auth;
         try {
             auth = instagramService.login(props.getUsername(), props.getPassword());
         } catch (Exception e) {
-            throw new RuntimeException("Failed to initialize PreAuthorizedInstagramService.", e);
+            throw new PreAuthorizedInstagramServiceInitializationException(e);
         }
         return new PreAuthorizedInstagramService(auth, instagramService, followerRepository);
     }
 
+    public FollowerData diff(String userName) throws Exception {
+        FollowerData initial = null; // getFollowerData(userName);
+        List<FollowerData> previousDiffs = null;
+        List<FollowedBy> currentFollowers = null; // query currentFollowerData
+
+//        return initial.apply(previousDiffs).diff(currentFollowers);
+        return null;
+    }
+
+    @Getter
+    private static class FollowerData {
+        private final List<String> retards;
+        private final List<String> followers;
+
+        FollowerData(List<String> retards, List<String> followers) {
+            this.retards = Collections.unmodifiableList(retards);
+            this.followers = Collections.unmodifiableList(followers);
+        }
+    }
 }

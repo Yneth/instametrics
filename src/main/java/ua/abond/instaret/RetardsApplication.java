@@ -15,7 +15,7 @@ import ua.abond.instaret.service.PreAuthorizedInstagramService;
 @EnableConfigurationProperties({InstagramPreAuthorizationProperties.class})
 public class RetardsApplication {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication.run(RetardsApplication.class);
     }
 
