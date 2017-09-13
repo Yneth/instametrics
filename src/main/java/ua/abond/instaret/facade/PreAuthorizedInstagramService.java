@@ -1,11 +1,6 @@
-package ua.abond.instaret.service;
+package ua.abond.instaret.facade;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ua.abond.instaret.dto.FollowedBy;
-import ua.abond.instaret.exception.PreAuthorizedInstagramServiceInitializationException;
-import ua.abond.instaret.repository.FollowerRepository;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -14,13 +9,30 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import lombok.RequiredArgsConstructor;
+import ua.abond.instaret.dto.FollowedBy;
+import ua.abond.instaret.entity.FollowerDiff;
+import ua.abond.instaret.entity.FollowerSnapshot;
+import ua.abond.instaret.exception.PreAuthorizedInstagramServiceInitializationException;
+import ua.abond.instaret.repository.FollowerRepository;
+import ua.abond.instaret.service.Authentication;
+import ua.abond.instaret.service.FollowerDiffService;
+import ua.abond.instaret.service.FollowerSnapshotService;
+import ua.abond.instaret.service.InstagramPreAuthorizationProperties;
+import ua.abond.instaret.service.InstagramService;
+import ua.abond.instaret.util.LocalDateTimeInterval;
+
 @Service
 @RequiredArgsConstructor
 public class PreAuthorizedInstagramService {
 
     private final Authentication authentication;
     private final InstagramService instagramService;
+
+    // move to facade
     private final FollowerRepository followerRepository;
+    private final FollowerDiffService followerDiffService;
+    private final FollowerSnapshotService followerSnapshotService;
 
     public String getUserId(String userName) throws IOException {
         return instagramService.getUserId(authentication, userName);
@@ -57,13 +69,14 @@ public class PreAuthorizedInstagramService {
             return Collections.emptyList();
         }
         return left.stream().filter(t -> !right.contains(t))
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     public static PreAuthorizedInstagramService create(InstagramService instagramService,
                                                        FollowerRepository followerRepository,
+                                                       FollowerDiffService followerDiffService,
+                                                       FollowerSnapshotService followerSnapshotService,
                                                        InstagramPreAuthorizationProperties props) {
-
         if (Stream.of(props.getPassword(), props.getUsername()).allMatch(Objects::isNull)) {
             throw new PreAuthorizedInstagramServiceInitializationException("Login or password is missing");
         }
@@ -73,26 +86,27 @@ public class PreAuthorizedInstagramService {
         } catch (Exception e) {
             throw new PreAuthorizedInstagramServiceInitializationException(e);
         }
-        return new PreAuthorizedInstagramService(auth, instagramService, followerRepository);
+        return new PreAuthorizedInstagramService(auth, instagramService,
+                followerRepository, followerDiffService, followerSnapshotService);
     }
 
-    public FollowerData diff(String userName) throws Exception {
-        FollowerData initial = null; // getFollowerData(userName);
-        List<FollowerData> previousDiffs = null;
-        List<FollowedBy> currentFollowers = null; // query currentFollowerData
+    public FollowerSnapshot updateSnapshot(String userName) throws Exception {
+        FollowerSnapshot head = followerSnapshotService.getCurrentSnapshot(userName);
+        FollowerSnapshot current = followerSnapshotService.loadNewSnapshot(userName);
 
-//        return initial.apply(previousDiffs).diff(currentFollowers);
-        return null;
+        FollowerDiff diff = followerDiffService.getDiff(head, current);
+        followerDiffService.pushDiff(diff);
+        followerSnapshotService.dropPreviousSnapshot(head);
+
+        return current;
     }
 
-    @Getter
-    private static class FollowerData {
-        private final List<String> retards;
-        private final List<String> followers;
-
-        FollowerData(List<String> retards, List<String> followers) {
-            this.retards = Collections.unmodifiableList(retards);
-            this.followers = Collections.unmodifiableList(followers);
-        }
+    public FollowerDiff getLastDiff(String userName) {
+        return followerDiffService.getLastDiff(userName);
     }
+
+    public List<FollowerDiff> getDiffBetween(String userName, LocalDateTimeInterval interval) {
+        return followerDiffService.getDiffBetweenDates(userName, interval);
+    }
+
 }

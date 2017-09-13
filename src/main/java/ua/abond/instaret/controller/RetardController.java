@@ -8,7 +8,7 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import ua.abond.instaret.dto.FollowedBy;
-import ua.abond.instaret.service.PreAuthorizedInstagramService;
+import ua.abond.instaret.facade.PreAuthorizedInstagramService;
 
 @RestController
 @RequiredArgsConstructor
