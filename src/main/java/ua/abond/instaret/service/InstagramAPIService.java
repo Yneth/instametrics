@@ -33,7 +33,7 @@ import static io.vavr.API.unchecked;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InstagramService {
+public class InstagramAPIService {
 
     private static final String INSTAGRAM_URL = "https://www.instagram.com/";
 
