@@ -64,6 +64,7 @@
         function callback(output) {
             return function (data) {
                 output.empty();
+                console.log(data);
                 for (var id in data) {
                     var element = document.createElement('div');
                     element.innerHTML = JSON.stringify(data[id]);

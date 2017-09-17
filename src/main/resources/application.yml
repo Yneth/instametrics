@@ -1,6 +1,10 @@
 server:
   port: 9555
 
+spring:
+  data:
+    mongodb.uri: ${db.uri}
+
 instagram.pre.auth:
   username: ${instagram.username}
   password: ${instagram.password}

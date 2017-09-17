@@ -5,15 +5,17 @@ import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor(onConstructor = @__(@NonNull))
 public class LocalDateTimeInterval {
 
     private final LocalDateTime from;
     private final LocalDateTime to;
+
+    public LocalDateTimeInterval(LocalDateTime from, LocalDateTime to) {
+        this.from = Objects.requireNonNull(from, "From date cannot be null");
+        this.to = Objects.requireNonNull(to, "To date cannot be null");
+    }
 
     public long duration(ChronoUnit chronoUnit) {
         Objects.requireNonNull(chronoUnit, "ChronoUnit cannot be null");

@@ -1,17 +1,15 @@
 package ua.abond.instaret.service;
 
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
+
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import ua.abond.instaret.dto.FollowedBy;
 import ua.abond.instaret.exception.PreAuthorizedInstagramServiceInitializationException;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
-
-@Service
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PreAuthorizedInstagramAPIService {
 
@@ -22,12 +20,12 @@ public class PreAuthorizedInstagramAPIService {
         return instagramService.getUserId(authentication, userName);
     }
 
-    public List<FollowedBy> getFollowers(String user) throws Exception {
-        return instagramService.getFollowers(authentication, user);
+    public Set<FollowedBy> getFollowers(String userId) throws Exception {
+        return instagramService.getFollowersById(authentication, userId);
     }
 
-    public List<FollowedBy> getFollowers(String user, int batchSize) throws Exception {
-        return instagramService.getFollowers(authentication, user, batchSize);
+    public Set<FollowedBy> getFollowers(String userId, int batchSize) throws Exception {
+        return instagramService.getFollowersById(authentication, userId, batchSize);
     }
 
     public static PreAuthorizedInstagramAPIService create(InstagramAPIService instagramService,

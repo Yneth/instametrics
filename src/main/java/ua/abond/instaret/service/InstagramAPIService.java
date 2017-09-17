@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,9 +12,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,16 +25,29 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ua.abond.instaret.dto.FollowedBy;
 
 import static io.vavr.API.unchecked;
 
+/**
+ * TODO: add logic to swap accounts on 429 error code
+ * Also should add some logging of all queries
+ * so we would have statistics for each account activity
+ *
+ *
+ * Check if it is possible to reuse cursor for different accounts
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class InstagramAPIService {
 
     private static final String INSTAGRAM_URL = "https://www.instagram.com/";
+    // TODO: it is better to move it to the prop and later calculate dynamically
+    // create min and max props and via binary search fallback to min
+    // 4500 as max 1000 as min would be OK
+    private static final int BATCH_SIZE = 3500;
 
     private final ObjectMapper mapper;
 
@@ -64,8 +76,14 @@ public class InstagramAPIService {
         return new Authentication(login, userId, cookies);
     }
 
-    public List<FollowedBy> getFollowers(Authentication auth, String userName, int batchSize) throws Exception {
-        Variables queryVariables = new Variables(getUserId(auth, userName), batchSize);
+    public Set<FollowedBy> getFollowersByUserName(Authentication auth, String userName)
+            throws Exception {
+        String userId = getUserId(auth, userName);
+        return getFollowersById(auth, userId);
+    }
+
+    public Set<FollowedBy> getFollowersById(Authentication auth, String userId, int batchSize) throws Exception {
+        Variables queryVariables = new Variables(userId, batchSize);
 
         String queryId = getFollowedByQueryId(auth)
                 .orElseThrow(() -> new RuntimeException("could not find queryId"));
@@ -106,11 +124,11 @@ public class InstagramAPIService {
         return nodes.map(node -> node.get("node"))
                 .map(JsonNode::toString)
                 .map(node -> unchecked(() -> mapper.readValue(node, FollowedBy.class)).get())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
-    public List<FollowedBy> getFollowers(Authentication auth, String userName) throws Exception {
-        return getFollowers(auth, userName, 10);
+    public Set<FollowedBy> getFollowersById(Authentication auth, String userName) throws Exception {
+        return getFollowersById(auth, userName, BATCH_SIZE);
     }
 
     public Optional<String> getFollowedByQueryId(Authentication authentication) throws IOException {
@@ -144,6 +162,9 @@ public class InstagramAPIService {
     }
 
     public String getUserId(Authentication authentication, String userName) throws IOException {
+        if (authentication.getLogin().equals(userName)) {
+            return authentication.getUserId();
+        }
         return getUserId(authentication.getCookies(), userName);
     }
 
