@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import ua.abond.metrics.domain.MongoFollowerDiff;
+import ua.abond.metrics.domain.follower.MongoFollowerDiff;
 import ua.abond.instaret.model.FollowerDiff;
 import ua.abond.metrics.repository.FollowerDiffRepository;
 import ua.abond.instaret.util.LocalDateTimeInterval;

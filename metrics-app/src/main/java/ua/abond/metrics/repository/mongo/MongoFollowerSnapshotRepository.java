@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-import ua.abond.metrics.domain.MongoFollowerSnapshot;
+import ua.abond.metrics.domain.follower.MongoFollowerSnapshot;
 import ua.abond.instaret.model.FollowerSnapshot;
 import ua.abond.metrics.repository.FollowerSnapshotRepository;
 

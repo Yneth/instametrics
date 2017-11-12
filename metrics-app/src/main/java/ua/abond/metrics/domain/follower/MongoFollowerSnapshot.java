@@ -1,4 +1,4 @@
-package ua.abond.metrics.domain;
+package ua.abond.metrics.domain.follower;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

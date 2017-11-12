@@ -1,4 +1,4 @@
-//package ua.abond.metrics.facade.reactive;
+//package ua.abond.metrics.facade.follower.reactive;
 //
 //import org.springframework.stereotype.Service;
 //

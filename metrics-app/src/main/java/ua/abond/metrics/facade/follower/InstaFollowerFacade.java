@@ -1,4 +1,4 @@
-package ua.abond.metrics.facade;
+package ua.abond.metrics.facade.follower;
 
 import org.springframework.stereotype.Component;
 
@@ -9,9 +9,9 @@ import java.util.Set;
 
 import io.vavr.control.Option;
 import lombok.RequiredArgsConstructor;
-import ua.abond.metrics.domain.FollowerDiff;
-import ua.abond.metrics.domain.FollowerSnapshot;
-import ua.abond.metrics.domain.ImmutableFollowerSnapshot;
+import ua.abond.metrics.domain.follower.FollowerDiff;
+import ua.abond.metrics.domain.follower.FollowerSnapshot;
+import ua.abond.metrics.domain.follower.ImmutableFollowerSnapshot;
 import ua.abond.metrics.service.dto.FollowedBy;
 import ua.abond.metrics.repository.FollowerDiffRepository;
 import ua.abond.metrics.repository.FollowerSnapshotRepository;
@@ -21,7 +21,7 @@ import ua.abond.metrics.util.LocalDateTimeInterval;
 
 @Component
 @RequiredArgsConstructor
-public class InstagramFollowerFacade {
+public class InstaFollowerFacade {
 
     private final PreAuthorizedInstaService instagramApi;
 

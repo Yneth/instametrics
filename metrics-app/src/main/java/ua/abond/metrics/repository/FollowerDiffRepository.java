@@ -2,7 +2,7 @@ package ua.abond.metrics.repository;
 
 import java.util.Set;
 
-import ua.abond.metrics.domain.FollowerDiff;
+import ua.abond.metrics.domain.follower.FollowerDiff;
 import ua.abond.metrics.util.LocalDateTimeInterval;
 
 public interface FollowerDiffRepository {

@@ -1,4 +1,4 @@
-package ua.abond.metrics.domain;
+package ua.abond.metrics.domain.follower;
 
 import java.time.LocalDateTime;
 import java.util.Set;
