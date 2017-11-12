@@ -8,8 +8,16 @@
     <artifactId>iretards</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>metrics-app</module>
+        <module>metrics-ui</module>
+    </modules>
+
     <properties>
-        <spring-boot.version>2.0.0.BUILD-SNAPSHOT</spring-boot.version>
+        <!--http://repo.spring.io/milestone/org/springframework/boot/spring-boot-dependencies/-->
+        <spring-boot.version>2.0.0.M5</spring-boot.version>
         <spring-cloud.version>Finchley.BUILD-SNAPSHOT</spring-cloud.version>
 
         <lombok.version>1.16.16</lombok.version>
@@ -56,7 +64,7 @@
             <dependency>
                 <groupId>io.projectreactor</groupId>
                 <artifactId>reactor-bom</artifactId>
-                <version>Bismuth-M1</version>
+                <version>Bismuth-RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -129,18 +137,14 @@
             <artifactId>spring-boot-starter-jetty</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webflux</artifactId>
-            <version>5.0.0.RC1</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
 
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactive-streams</artifactId>
+            <version>3.1.0.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -247,17 +251,17 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
+        <sourceDirectory>metrics-app/metrics-utils/src/main/java</sourceDirectory>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>metrics-app/metrics-utils/src/main/resources</directory>
             </resource>
         </resources>
 
-        <testSourceDirectory>src/test/java</testSourceDirectory>
+        <testSourceDirectory>metrics-app/metrics-utils/src/test/java</testSourceDirectory>
         <testResources>
             <testResource>
-                <directory>src/test/resources</directory>
+                <directory>metrics-app/metrics-utils/src/test/resources</directory>
             </testResource>
         </testResources>
 

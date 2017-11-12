@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="text" id="userName"/>
+
+<a id="showFollowers" href="#">Current followers</a>
+<a id="showRetards" href="#">Retards</a>
+<a id="showNewcomers" href="#">Newcomers</a>
+<a id="saveFollowers" href="#">Save</a>
+<a id="showDiffs" href="#">ShowDiffs</a>
+<a id="showFollowing" href="#">ShowFollowing</a>
+
+<div id="output">
+    Output
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    ;(function () {
+        const doc = $(document),
+            userNameText = $('#userName'),
+            showFollowers = $('#showFollowers'),
+            showRetards = $('#showRetards'),
+            saveFollowers = $('#saveFollowers'),
+            showNewcomers = $('#showNewcomers'),
+            showFollowing = $('#showFollowing'),
+            showDiffs = $('#showDiffs'),
+            printToOutput = callback($('#output'));
+
+        const retardService = function (userName) {
+            var params = '?userName=' + userName;
+            return {
+                showFollowers: function (cb) {
+                    $.get('/followers/' + params, cb);
+                },
+                showRetards: function (cb) {
+                    $.get('/retards/' + params, cb);
+                },
+                showNewcomers: function (cb) {
+                    $.get('/followers/new/' + params, cb);
+                },
+                saveFollowers: function (cb) {
+                    $.get('/followers/save/' + params, cb);
+                },
+                getAllDiffs: function (cb) {
+                    $.get('/diffs/all/' + params, cb);
+                },
+                showFollowing: function (cb) {
+                    $.get('/following/' + params, cb);
+                }
+            };
+        };
+        const retardServiceFactory = function () {
+            return retardService(userNameText.val());
+        };
+
+        showFollowers.on('click', function () {
+            retardServiceFactory().showFollowers(printToOutput);
+        });
+        showRetards.on('click', function () {
+            retardServiceFactory().showRetards(printToOutput);
+        });
+        showNewcomers.on('click', function () {
+            retardServiceFactory().showNewcomers(printToOutput);
+        });
+        saveFollowers.on('click', function () {
+            retardServiceFactory().saveFollowers(printToOutput);
+        });
+        showDiffs.on('click', function () {
+            retardServiceFactory().getAllDiffs(printToOutput);
+        });
+        showFollowing.on('click', function () {
+            retardServiceFactory().showFollowing(printToOutput);
+        });
+
+        function callback(output) {
+            return function (data) {
+                output.empty();
+                console.log(data);
+                if (!data || data.length === 0) {
+                    data['1'] = 'Empty';
+                }
+                for (let id in data) {
+                    var div = document.createElement('div');
+                    div.innerHTML = JSON.stringify(data[id]);
+                    output.append(div);
+                }
+            };
+        }
+    })();
+</script>
+</body>
+</html>
