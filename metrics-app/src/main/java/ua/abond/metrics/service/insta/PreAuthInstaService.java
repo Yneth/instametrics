@@ -13,7 +13,7 @@ import ua.abond.metrics.service.dto.AuthenticationDto;
 import ua.abond.metrics.service.dto.FollowingDto;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class PreAuthorizedInstaService {
+public class PreAuthInstaService {
 
     private final AuthenticationDto authentication;
     private final InstaApiService instagramService;
@@ -30,8 +30,8 @@ public class PreAuthorizedInstaService {
         return instagramService.getFollowingById(authentication, userId);
     }
 
-    public static PreAuthorizedInstaService create(InstaApiService instagramService,
-                                                   PreAuthInstaProperties props) {
+    public static PreAuthInstaService create(InstaApiService instagramService,
+                                             PreAuthInstaProperties props) {
         if (Stream.of(props.getPassword(), props.getUsername()).allMatch(Objects::isNull)) {
             throw new PreAuthInstaServiceInitException("Login or password is missing");
         }
@@ -41,7 +41,7 @@ public class PreAuthorizedInstaService {
         } catch (Exception e) {
             throw new PreAuthInstaServiceInitException(e);
         }
-        return new PreAuthorizedInstaService(auth, instagramService);
+        return new PreAuthInstaService(auth, instagramService);
     }
 
 }

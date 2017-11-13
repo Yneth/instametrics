@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import ua.abond.metrics.service.insta.InstaApiService;
 import ua.abond.metrics.service.insta.PreAuthInstaProperties;
-import ua.abond.metrics.service.insta.PreAuthorizedInstaService;
+import ua.abond.metrics.service.insta.PreAuthInstaService;
 
 @SpringBootApplication
 @EnableConfigurationProperties({PreAuthInstaProperties.class})
@@ -24,9 +24,9 @@ public class RetardsApplication {
     }
 
     @Bean
-    public PreAuthorizedInstaService preAuthorizedInstagramService(
+    public PreAuthInstaService preAuthorizedInstagramService(
         InstaApiService instagramService, PreAuthInstaProperties properties) {
-        return PreAuthorizedInstaService.create(instagramService, properties);
+        return PreAuthInstaService.create(instagramService, properties);
     }
 
 }

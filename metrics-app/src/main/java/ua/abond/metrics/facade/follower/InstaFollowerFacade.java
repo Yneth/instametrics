@@ -16,14 +16,14 @@ import ua.abond.metrics.service.dto.FollowedBy;
 import ua.abond.metrics.repository.follower.FollowerDiffRepository;
 import ua.abond.metrics.repository.follower.FollowerSnapshotRepository;
 import ua.abond.metrics.service.dto.FollowingDto;
-import ua.abond.metrics.service.insta.PreAuthorizedInstaService;
+import ua.abond.metrics.service.insta.PreAuthInstaService;
 import ua.abond.metrics.util.date.LocalDateTimeInterval;
 
 @Component
 @RequiredArgsConstructor
 public class InstaFollowerFacade {
 
-    private final PreAuthorizedInstaService instagramApi;
+    private final PreAuthInstaService instagramApi;
 
     // TODO: it does not look like facade as it is only working with repositories
     private final FollowerDiffRepository followerDiffRepository;
