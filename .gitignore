@@ -76,4 +76,5 @@ buildNumber.properties
 .idea
 *.iml
 
+.env
 application-local.yml
