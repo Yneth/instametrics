@@ -1,6 +1,5 @@
 package ua.abond.metrics.repository.follower.mongo;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.LocalDateTime;
@@ -12,7 +11,6 @@ import ua.abond.metrics.domain.follower.MongoFollowerDiff;
 import ua.abond.metrics.repository.follower.FollowerDiffRepository;
 import ua.abond.metrics.util.date.LocalDateTimeInterval;
 
-@Profile("mongo")
 public interface MongoFollowerDiffRepository extends
     MongoRepository<MongoFollowerDiff, String>, FollowerDiffRepository {
 
