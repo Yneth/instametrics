@@ -1,4 +1,4 @@
-package ua.abond.metrics.repository.mongo;
+package ua.abond.metrics.repository.follower.mongo;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -7,14 +7,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import ua.abond.metrics.domain.follower.FollowerDiff;
 import ua.abond.metrics.domain.follower.MongoFollowerDiff;
-import ua.abond.instaret.model.FollowerDiff;
-import ua.abond.metrics.repository.FollowerDiffRepository;
-import ua.abond.instaret.util.LocalDateTimeInterval;
+import ua.abond.metrics.repository.follower.FollowerDiffRepository;
+import ua.abond.metrics.util.date.LocalDateTimeInterval;
 
 @Profile("mongo")
 public interface MongoFollowerDiffRepository extends
-        MongoRepository<MongoFollowerDiff, String>, FollowerDiffRepository {
+    MongoRepository<MongoFollowerDiff, String>, FollowerDiffRepository {
 
     List<FollowerDiff> findFirstByUserIdOrderByCreationDateDesc(String userId);
 
@@ -25,7 +25,7 @@ public interface MongoFollowerDiffRepository extends
         FollowerDiff toSave = diff;
         if (!(toSave instanceof MongoFollowerDiff)) {
             toSave = new MongoFollowerDiff(diff.getHash(), diff.getUserId(), diff.getCreationDate(),
-                    diff.getAdded(), diff.getRemoved());
+                diff.getAdded(), diff.getRemoved());
         }
         this.save((MongoFollowerDiff) toSave);
     }

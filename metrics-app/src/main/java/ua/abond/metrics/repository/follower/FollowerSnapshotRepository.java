@@ -1,4 +1,4 @@
-package ua.abond.metrics.repository;
+package ua.abond.metrics.repository.follower;
 
 import java.util.Optional;
 

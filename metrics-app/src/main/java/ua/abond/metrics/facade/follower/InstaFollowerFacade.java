@@ -13,11 +13,11 @@ import ua.abond.metrics.domain.follower.FollowerDiff;
 import ua.abond.metrics.domain.follower.FollowerSnapshot;
 import ua.abond.metrics.domain.follower.ImmutableFollowerSnapshot;
 import ua.abond.metrics.service.dto.FollowedBy;
-import ua.abond.metrics.repository.FollowerDiffRepository;
-import ua.abond.metrics.repository.FollowerSnapshotRepository;
+import ua.abond.metrics.repository.follower.FollowerDiffRepository;
+import ua.abond.metrics.repository.follower.FollowerSnapshotRepository;
 import ua.abond.metrics.service.dto.FollowingDto;
 import ua.abond.metrics.service.insta.PreAuthorizedInstaService;
-import ua.abond.metrics.util.LocalDateTimeInterval;
+import ua.abond.metrics.util.date.LocalDateTimeInterval;
 
 @Component
 @RequiredArgsConstructor

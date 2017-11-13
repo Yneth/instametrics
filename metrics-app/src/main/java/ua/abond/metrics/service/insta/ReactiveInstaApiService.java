@@ -30,8 +30,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ua.abond.metrics.service.dto.FollowedBy;
 import ua.abond.metrics.service.dto.AuthenticationDto;
-import ua.abond.instaret.util.reactor.FluxOps;
 import ua.abond.metrics.service.dto.QueryVariablesDto;
+import ua.abond.metrics.util.reactor.FluxOps;
 
 import static io.vavr.API.unchecked;
 

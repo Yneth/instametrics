@@ -1,6 +1,6 @@
-package ua.abond.metrics.repository;
+package ua.abond.metrics.repository.user;
 
-import ua.abond.metrics.domain.User;
+import ua.abond.metrics.domain.user.User;
 
 public interface UserRepository {
 

@@ -1,4 +1,4 @@
-package ua.abond.metrics.util;
+package ua.abond.metrics.util.date;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

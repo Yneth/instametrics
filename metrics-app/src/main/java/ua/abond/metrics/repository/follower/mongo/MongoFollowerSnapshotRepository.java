@@ -1,13 +1,13 @@
-package ua.abond.metrics.repository.mongo;
+package ua.abond.metrics.repository.follower.mongo;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
+import ua.abond.metrics.domain.follower.FollowerSnapshot;
 import ua.abond.metrics.domain.follower.MongoFollowerSnapshot;
-import ua.abond.instaret.model.FollowerSnapshot;
-import ua.abond.metrics.repository.FollowerSnapshotRepository;
+import ua.abond.metrics.repository.follower.FollowerSnapshotRepository;
 
 @Profile("mongo")
 public interface MongoFollowerSnapshotRepository extends
