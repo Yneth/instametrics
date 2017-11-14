@@ -75,6 +75,7 @@ buildNumber.properties
 ### User specific
 .idea
 *.iml
+.m2
 
 .env
 application-local.yml
