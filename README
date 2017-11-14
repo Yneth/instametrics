@@ -1,21 +1,20 @@
-Before running project:
-    install jdk8 from official site
-    set java_home environment variable
-
-    copy .env.example and rename it to .env
-      and fill in missing properties
-
 Running project (all commands should be executed in the root folder):
 1) docker:
-    run: mvnw clean install
+    run: docker-compose -f docker-compose.build.yml build
     run: docker-compose -f docker-compose.dev.yml build
     run: docker-compose -f docker-compose.dev.yml up
 
-    one liner: mvnw clean install && \
+    one liner: docker-compose -f docker-compose.build.yml build && \
        docker-compose -f docker-compose.dev.yml build && \
        docker-compose -f docker-compose.dev.yml up
 
 2) manually:
+    install jdk8 from official site
+    set java_home environment variable
+
+    copy .env.example and rename it to .env
+        and fill in missing properties
+
     create file ./metrics-app/src/main/java/resources/application-local.yml
     set missing properties
 
