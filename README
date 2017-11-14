@@ -1,12 +1,14 @@
 Running project (all commands should be executed in the root folder):
 1) docker:
     run: docker-compose -f docker-compose.build.yml build
+    run: docker-compose -f docker-compose.build.yml up
     run: docker-compose -f docker-compose.dev.yml build
     run: docker-compose -f docker-compose.dev.yml up
 
     one liner: docker-compose -f docker-compose.build.yml build && \
-       docker-compose -f docker-compose.dev.yml build && \
-       docker-compose -f docker-compose.dev.yml up
+        docker-compose -f docker-compose.build.yml up && \
+        docker-compose -f docker-compose.dev.yml build && \
+        docker-compose -f docker-compose.dev.yml up
 
 2) manually:
     install jdk8 from official site
