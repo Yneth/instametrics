@@ -11,7 +11,7 @@ import io.vavr.control.Option;
 import lombok.RequiredArgsConstructor;
 import ua.abond.metrics.domain.follower.FollowerDiff;
 import ua.abond.metrics.domain.follower.FollowerSnapshot;
-import ua.abond.metrics.domain.follower.ImmutableFollowerSnapshot;
+import ua.abond.metrics.domain.follower.MongoFollowerSnapshot;
 import ua.abond.metrics.service.dto.FollowedBy;
 import ua.abond.metrics.repository.follower.FollowerDiffRepository;
 import ua.abond.metrics.repository.follower.FollowerSnapshotRepository;
@@ -32,7 +32,7 @@ public class InstaFollowerFacade {
     public FollowerSnapshot updateSnapshot(String userName) throws Exception {
         String userId = getUserId(userName);
         FollowerSnapshot newSnapshot =
-            new ImmutableFollowerSnapshot(userId, LocalDateTime.now(), instagramApi.getFollowers(userId));
+            new MongoFollowerSnapshot(userId, LocalDateTime.now(), instagramApi.getFollowers(userId));
 
         Optional<FollowerSnapshot> oldSnapshot = followerSnapshotRepository.getSnapshot(userId);
         followerSnapshotRepository.replaceSnapshot(newSnapshot);
