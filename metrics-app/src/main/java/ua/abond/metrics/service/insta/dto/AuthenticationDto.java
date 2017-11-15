@@ -1,4 +1,4 @@
-package ua.abond.metrics.service.dto;
+package ua.abond.metrics.service.insta.dto;
 
 import java.util.Collections;
 import java.util.Map;

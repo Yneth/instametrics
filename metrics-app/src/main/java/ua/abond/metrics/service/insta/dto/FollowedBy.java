@@ -1,4 +1,4 @@
-package ua.abond.metrics.service.dto;
+package ua.abond.metrics.service.insta.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

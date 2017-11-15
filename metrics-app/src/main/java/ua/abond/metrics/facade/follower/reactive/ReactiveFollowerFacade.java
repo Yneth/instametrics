@@ -8,7 +8,7 @@
 //import java.util.Set;
 //
 //import lombok.RequiredArgsConstructor;
-//import ua.abond.metrics.service.dto.FollowedBy;
+//import ua.abond.metrics.service.insta.dto.FollowedBy;
 //import ua.abond.metrics.entity.ImmutableFollowerSnapshot;
 //import ua.abond.metrics.entity.MongoFollowerSnapshot;
 //import ua.abond.metrics.facade.InstagramFollowerFacade;

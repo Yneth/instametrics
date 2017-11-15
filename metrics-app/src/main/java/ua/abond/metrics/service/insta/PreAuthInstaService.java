@@ -1,16 +1,16 @@
 package ua.abond.metrics.service.insta;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import ua.abond.metrics.service.insta.dto.AuthenticationDto;
+import ua.abond.metrics.service.insta.dto.FollowedBy;
+import ua.abond.metrics.service.insta.dto.FollowingDto;
+import ua.abond.metrics.service.insta.exception.PreAuthInstaServiceInitException;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import ua.abond.metrics.service.dto.FollowedBy;
-import ua.abond.metrics.service.insta.exception.PreAuthInstaServiceInitException;
-import ua.abond.metrics.service.dto.AuthenticationDto;
-import ua.abond.metrics.service.dto.FollowingDto;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PreAuthInstaService {

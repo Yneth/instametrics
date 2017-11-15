@@ -12,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 import ua.abond.metrics.domain.follower.FollowerDiff;
 import ua.abond.metrics.domain.follower.FollowerSnapshot;
 import ua.abond.metrics.domain.follower.MongoFollowerSnapshot;
-import ua.abond.metrics.service.dto.FollowedBy;
+import ua.abond.metrics.service.insta.dto.FollowedBy;
 import ua.abond.metrics.repository.follower.FollowerDiffRepository;
 import ua.abond.metrics.repository.follower.FollowerSnapshotRepository;
-import ua.abond.metrics.service.dto.FollowingDto;
+import ua.abond.metrics.service.insta.dto.FollowingDto;
 import ua.abond.metrics.service.insta.PreAuthInstaService;
 import ua.abond.metrics.util.date.LocalDateTimeInterval;
 

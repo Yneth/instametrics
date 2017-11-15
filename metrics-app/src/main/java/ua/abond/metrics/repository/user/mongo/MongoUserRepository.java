@@ -1,4 +1,4 @@
-package ua.abond.metrics.repository.follower.mongo;
+package ua.abond.metrics.repository.user.mongo;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

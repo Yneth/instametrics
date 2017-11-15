@@ -24,10 +24,10 @@ import java.util.stream.StreamSupport;
 import io.vavr.API;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ua.abond.metrics.service.dto.FollowedBy;
-import ua.abond.metrics.service.dto.AuthenticationDto;
-import ua.abond.metrics.service.dto.FollowingDto;
-import ua.abond.metrics.service.dto.QueryVariablesDto;
+import ua.abond.metrics.service.insta.dto.FollowedBy;
+import ua.abond.metrics.service.insta.dto.AuthenticationDto;
+import ua.abond.metrics.service.insta.dto.FollowingDto;
+import ua.abond.metrics.service.insta.dto.QueryVariablesDto;
 
 import static io.vavr.API.unchecked;
 

@@ -6,9 +6,9 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ua.abond.metrics.service.dto.FollowedBy;
+import ua.abond.metrics.service.insta.dto.FollowedBy;
 import ua.abond.metrics.service.insta.exception.PreAuthInstaServiceInitException;
-import ua.abond.metrics.service.dto.AuthenticationDto;
+import ua.abond.metrics.service.insta.dto.AuthenticationDto;
 
 @RequiredArgsConstructor
 public class ReactivePreAuthInstaApiService {

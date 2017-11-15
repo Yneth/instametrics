@@ -1,18 +1,27 @@
 package ua.abond.metrics.domain.follower;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.springframework.data.annotation.Id;
+import ua.abond.metrics.domain.Diff;
+import ua.abond.metrics.domain.Snapshot;
+import ua.abond.metrics.domain.user.User;
+
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
-import ua.abond.metrics.service.dto.FollowedBy;
+@Getter
+@AllArgsConstructor
+public class FollowerSnapshot implements Snapshot<FollowerSnapshot, User> {
 
-public interface FollowerSnapshot {
+    @Id
+    private String ownerId;
+    private LocalDateTime creationDate;
+    private List<User> sources;
 
-    String getUserId();
-
-    LocalDateTime getCreationDate();
-
-    Set<FollowedBy> getFollowers();
-
-    FollowerDiff diff(FollowerSnapshot that);
+    @Override
+    public Diff<User> diff(Snapshot<FollowerSnapshot, User> that) {
+        return new FollowerDiffWrapper(Snapshot.super.diff(that));
+    }
 
 }

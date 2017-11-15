@@ -9,9 +9,9 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import ua.abond.metrics.domain.follower.FollowerDiff;
 import ua.abond.metrics.domain.follower.FollowerSnapshot;
-import ua.abond.metrics.service.dto.FollowedBy;
+import ua.abond.metrics.service.insta.dto.FollowedBy;
 import ua.abond.metrics.facade.follower.InstaFollowerFacade;
-import ua.abond.metrics.service.dto.FollowingDto;
+import ua.abond.metrics.service.insta.dto.FollowingDto;
 
 @RestController
 @RequiredArgsConstructor
